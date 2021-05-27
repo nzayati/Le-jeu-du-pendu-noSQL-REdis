@@ -14,10 +14,8 @@
 <nav class="navbar navbar-light bg-light">
     <span class="navbar-brand mb-0 h1">Le PeNdU</span>
     <span class="navbar-text">
-    <?php 
-    
-    $players=getPlayers($redis);
-    $playerName=getPlayerName($redis);
+   
+    <!--
     if(isset($playerName)){
         echo "Bonjour"+$playerName+", ton score est "+$playerScore+" points !";}
     else{
@@ -29,7 +27,8 @@
         echo '</select><button type="submit">Se connecter</button></span></form>';
     }
     
-    ?>
+    -->
+      Bonjour Joe, ton score est 10293 points !
     </span>
 </nav>
 
@@ -49,7 +48,7 @@
         </div>
         <div class="col-sm-6">
             <h2>Mot à trouver</h2>
-            <span>
+            <span><form action="page.php" method="get">
             <? 
             $myWord=getWord($redis);
             if(isset($myWord)){
@@ -75,7 +74,7 @@
             if(isWinning($redis)){
                 echo " Bravo !";
             }
-     ?></span>
+     ?></form></span>
         </div>
 
 
@@ -109,7 +108,7 @@
             <span><input type="text" name="letter" size="3"/><button>Valider</button></span>
             </form>
         </div>
-        <div value="my_word" class="col-sm-6">
+        <div class="col-sm-6">
             <h2>Proposer un mot</h2>
             <form action="page.php" method="post">
             <span><input type="text" name="htmlWord" size="20"/><button type="submit">Valider</button></span>

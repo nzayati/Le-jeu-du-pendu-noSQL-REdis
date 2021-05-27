@@ -21,25 +21,29 @@ catch (Exception $e) {
 }
  
 // mise à jour de la valeur
-$redis->set('message', 'Hello world');
+//$redis->set('message', 'Hello world');
 
 // recuperation de la valeur
-$value = $redis->get('message');
+//$value = $redis->get('message');
 
 // affichage de la valeur'
 //print($value);
 //echo ($redis->exists('message')) ? "Oui" : "Non";
 
 //suppression de la clé
-$redis->del('message'); 
+//$redis->del('message'); 
+
+$players=getPlayers($redis);
+$playerName=getPlayerName($redis); 
 
 function getPlayerName($redis) {
-    $redis->del('currentPlayer');
     if(isset($_POST['currentPlayer'])){
         $redis->set('currentPlayer', $_POST['setPlayer']);
         
+        $playerName = $redis->get('currentPlayer');
     }else{
         $_POST["setPlayer"]='';
+        $redis->set('currentPlayer', $_POST['setPlayer']);
     }
     $playerName = $redis->get('currentPlayer');
     return $playerName;
@@ -57,10 +61,9 @@ function getWord($redis){
         $redis->set('word', $_POST['htmlWord']);
         $redis->expire('word','60');
         $myWord = $redis->get('word');
-        
-         return $myWord;
+        return $myWord;
     }else{
-        
+        return "Entrez un mot !";
     }
 }
 function getTtlWord($redis,$word){
@@ -86,7 +89,7 @@ function isWinning($redis){
             
         }
         else{
-            return false;;
+            return false;
         }
     }return true;
 
@@ -101,10 +104,11 @@ $redis->set('currentTryr','0');
 $currentTry=$redis->get('currentTryr');
 
 function setLetters($redis){
-    if(isset($_POST['letter']) && isset($myWord)){
+    $letters=getLetters($redis);
+    if(isset($_POST['letter']) && isset($POST['htmlWord'])){
         $let=$_POST['letter'];
         if(isset($letters[$let])) {
-            echo 'hello';
+            echo 'la lettre est deja testée';
         }
         else{
             $redis->lpush('testedLetters', $let);
@@ -113,8 +117,8 @@ function setLetters($redis){
             }
     }
     
-    $letters = $redis->lrange('testedLetters',0,-1);
 }
 setLetters($redis);
-$redis->del('letter');
+$redis->del('testedletter');
+
 $redis->del('currentTryr');
