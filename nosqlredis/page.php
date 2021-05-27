@@ -9,14 +9,30 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
+<?php include("index.php"); ?>
 
 <nav class="navbar navbar-light bg-light">
     <span class="navbar-brand mb-0 h1">Le PeNdU</span>
     <span class="navbar-text">
-      Bonjour Joe, ton score est 10293 points !
+    <?php 
+    
+    $players=getPlayers($redis);
+    $playerName=getPlayerName($redis);
+    if(isset($playerName)){
+        echo "Bonjour"+$playerName+", ton score est "+$playerScore+" points !";}
+    else{
+        echo'<form action="page.php" method="post"><span><select>';
+        $in=0;
+        foreach ($players as $p){
+            echo "<option name='setPlayer' value='s+$in+'>$p</option>";
+            $in++;}
+        echo '</select><button type="submit">Se connecter</button></span></form>';
+    }
+    
+    ?>
     </span>
 </nav>
-<?php include("index.php"); ?>
+
 
 <div class="container">
 
@@ -34,16 +50,42 @@
         <div class="col-sm-6">
             <h2>Mot à trouver</h2>
             <span>
-                <?php 
-                    echo $myWord;
-                ?>
-            </span>
-            <span>_ &nbsp; _ &nbsp _ &nbsp E &nbsp _ &nbsp _ &nbsp _ &nbsp E &nbsp _ </span>
+            <? 
+            $myWord=getWord($redis);
+            if(isset($myWord)){
+                $length = strlen($myWord);
+                $myArray = array();
+                for ($i=0; $i<$length; $i++) {
+                     $myArray[$i] = $myWord[$i]; 
+                }
+                for ($j=0; $j<$length; $j++) {
+                    if(in_array ( $myArray[$j], $letters)){
+                        echo strtoupper($myArray[$j]);
+                    }
+                    else{
+                        echo "_";
+                    }
+                    echo " &nbsp";
+                }
+            }
+            else{
+                $myWord=getWord($redis);
+                echo " Proposez un mot !";
+            }
+            if(isWinning($redis)){
+                echo " Bravo !";
+            }
+     ?></span>
         </div>
+
+
+
         <div class="col-sm-3">
             <h2>Propositions</h2>
             <ul><?php
+                $letters=getLetters($redis);
                 foreach ($letters as $l){
+
                     echo "<li>$l</li>";
                 }
                 ?>
@@ -53,11 +95,11 @@
     <div class="row">
         <div class="col-sm-6">
             <h2>Temps restant</h2>
-            <span><?php echo $time; ?> secondes</span>
+            <span><?php echo getTtlWord($redis,getWord($redis)); ?> secondes</span>
         </div>
         <div class="col-sm-6">
             <h2>Nombre d'essais restant</h2>
-            <span>3 essais</span>
+            <span><?php echo $currentTry; ?> essais</span>
         </div>
     </div>
     <div class="row">
@@ -69,8 +111,8 @@
         </div>
         <div value="my_word" class="col-sm-6">
             <h2>Proposer un mot</h2>
-            <form method="post">
-            <span><input type="text" name="htmlWord" size="20"/><button type="submit" value="setWord">Valider</button></span>
+            <form action="page.php" method="post">
+            <span><input type="text" name="htmlWord" size="20"/><button type="submit">Valider</button></span>
             </form>
         </div>
     </div>
