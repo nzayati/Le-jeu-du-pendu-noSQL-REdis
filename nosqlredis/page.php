@@ -135,6 +135,11 @@ if (isset($_POST['submittedLetter'])) {
                             //On peut afficher le mot
                             $chosenWord = getDisplay($redis->get('WordToFind'));
                             $generalMessage=("Vous avez trouvé le mot avec ses lettres, bravo !");
+                            //on donne 10 points à tous les joueurs sauf le wordPicker
+                            for ($i = 1; $i <= $nbPlayers; $i++) {
+                                if($i!=$_SESSION['wordPicker']){
+                                    $redis->incrBy("points:" . $i, 10);}
+                            }
                             $allowWordPick = "true";
                 
                             //On change le joueur qui propose
@@ -199,7 +204,7 @@ if (isset($_POST['foundWord'])) {
         $nbAttempts = $redis->get('nbAttempts');
         
         if ($nbAttempts == 0) {
-            //Si il ne reste plus d'essais, on ajoute dix points au joueur qui a proposé le mot
+            //Si il ne reste plus d'essais, on ajoute dix points au wordPicker
             $redis->incrBy('points:' . $_SESSION['wordPicker'], 10);
 
             $_SESSION['wordPicker']++;
@@ -216,6 +221,11 @@ if (isset($_POST['foundWord'])) {
             //on affiche le mot en entier
             $chosenWord = getDisplay($redis->get('WordToFind'));
             $generalMessage=("Vous avez trouvé le mot !");
+            //on donne 10 points à tous les joueurs sauf le wordPicker
+            for ($i = 1; $i <= $nbPlayers; $i++) {
+                if($i!=$_SESSION['wordPicker']){
+                    $redis->incrBy("points:" . $i, 10);}
+            }
             $allowWordPick = "true";
 
             //On change de joueur qui va proposer le mot, on prend le joueur suivant
@@ -243,7 +253,7 @@ if (isset($_POST['foundWord'])) {
         }
     } else {
         $generalMessage=("Le temps est écoulé !");
-        //On ajoute dix points au joueur qui a proposé le mot
+        //On ajoute dix points au wordPicker
         $redis->incrBy('points:' . $_SESSION['wordPicker'], 10);
 
         //On change de joueur qui va proposer le mot, on prend le joueur suivant
