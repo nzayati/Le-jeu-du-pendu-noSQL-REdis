@@ -16,14 +16,23 @@
         <span class="navbar-brand mb-0 h1">Le PeNdU</span>
         <span class="navbar-text">
             <?php
-            //on affiche ici les informations du joueur qui doit choisir la lettre
             $name = $redis->HGET("player" . $_SESSION['letterPicker'] . "", "name");
             $points = $redis->get("points:" . $_SESSION['letterPicker']);
-            echo("Bonjour " . $name . " ton score est " . $points . " points !"); ?>
+            $mainPlayer = $redis->HGET("player" . $_SESSION['wordPicker'] . "", "name");
+            $pointsPlayer = $redis->get("points:" . $_SESSION['wordPicker']);
+            if($allowWordPick=="true"){
+                //on affiche ici les informations du joueur qui doit choisir le mot
+                echo("Bonjour " . $mainPlayer . " ton score est " . $pointsPlayer . " points !");
+            }
+            else{
+                //on affiche ici les informations du joueur qui doit choisir la lettre
+                echo("Bonjour " . $name . " ton score est " . $points . " points !");
+            }
+             ?>
         </span>
     </nav>
 
-    <div class="container">
+    <div style="width:1300px; margin:0 auto;" class="container">
 
         <div class="row">
             <div class="col-sm-3">
@@ -44,7 +53,7 @@
             <div class="col-sm-6">
                 <h2>Mot à trouver
                     <?php 
-                    $mainPlayer = $redis->HGET("player" . $_SESSION['wordPicker'] . "", "name");
+                    
                     echo ("<br>proposé par : ".$mainPlayer."<br>");
                     ?>
                 </h2><span>
@@ -54,10 +63,20 @@
                     echo ($chosenWord[$i] . " ");
                 }
                 
-?></span>
-<span>
-                <?php echo "<br><b>".($generalMessage)."</b>";
                 ?></span>
+                <span>
+                <?php echo "<br><b>".($generalMessage)."</b><br>";
+                ?></span><span>
+                <img src="images/pendu_<?php
+                            $nbAttempts = $redis->get('nbAttempts');
+                            if ($nbAttempts == "Le jeu n'a pas commencé") {
+                                echo("0");
+                            } else {
+                                echo("$nbAttempts");
+                            }
+                            ?>.gif"
+         alt="Image pendu correspondant à l'essai : <?php echo($nbAttempts); ?>"
+         ></span>
             </div>
             <div class="col-sm-3">
                 <h2>Propositions</h2>
@@ -70,6 +89,7 @@
                 </ul>
             </div>
         </div>
+        </br></br>
         <div class="row">
             <div class="col-sm-6">
                 <h2>Temps restant</h2>
@@ -80,7 +100,7 @@
             </div>
             <div class="col-sm-6">
                 <h2>Nombre d'essais restant</h2>
-                <span><?php $nbAttempts = $redis->get('nbAttempts');
+                <span><?php 
                         if ($nbAttempts == "Le jeu n'a pas commencé") {
                             echo($nbAttempts);
                         } else {
@@ -89,19 +109,25 @@
                         ?></span>
             </div>
         </div>
+        </br></br>
+        <?php if($allowWordPick=="false"): ?>
         <div class="row">
-            <div class="col-sm-6">
-                <h2>
-                    <?php 
+            <h2><?php 
                     echo ($name." : <br>");
                     ?>
+            </h2></br>
+        </div>
+        
+        <div class="row">
+        
+            <div class="col-sm-6">
+                <h2>
+                    
                     Proposer une lettre</h2>
                 <span>
                     <form method="post" action="index.php">
                         <input type="text" size="3" name="submittedLetter" />
-                        <input type="submit" <?php if ($allowSuggests == "false") {
-                                                    echo ("disabled");
-                                                }  ?> />
+                        <input type="submit"/>
                     </form>
                 </span>
             </div>
@@ -111,31 +137,30 @@
                 <span>
                     <form method="post" action="index.php">
                         <input type="text" size="3" name="foundWord" />
-                        <input type="submit" <?php if ($allowSuggests == "false") {
-                                                    echo ("disabled");
-                                                }  ?> />
+                        <input type="submit"/>
                     </form>
                 </span>
             </div>
-            </br></br></br></br></br></br></br></br></br></br></br>
+            </br></br></br></br></br></br></br>
+        </div>
+        <?php else: ?>
+        <div class="row"><h2><?php 
+                    echo ($mainPlayer." : <br>");
+                    ?>
+            </h2></br>
             <div class="col-sm-6">
                 <h2>Proposer un mot à trouver </h2>
-                <?php
-                
-                echo ("C'est au tour de " . $mainPlayer . " de proposer un mot");
-                ?>
                 <span>
                     <form method="post" action="index.php">
                         <input type="text" name="submittedWord" />
 
-                        <input type="submit" <?php if ($allowWordPick == "false") {
-                                                    echo ("disabled");
-                                                }  ?> />
+                        <input type="submit"/>
                     </form>
                 </span>
             </div>
+            
         </div>
-    </div>
+            <?php endif; ?>
 </body>
 
 </html>

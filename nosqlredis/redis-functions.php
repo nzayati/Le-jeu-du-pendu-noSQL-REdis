@@ -12,6 +12,15 @@ function isLetterInWord($letter, $redis)
     return false;
 }
 
+//permet uniquement d'afficher des lettre // rejette tous les caract != de lettres 
+function isLetter($character)
+{
+    if (preg_match("/[a-zA-Z]/", $character) && strlen($character)==1) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
 //vérifie s'il reste des lettres à découvrir
 function isAllLettersDiscovered($displayedWord, $redis)
 {
@@ -71,14 +80,6 @@ function getDisplay($wordShown)
     return $word;
 }
 
-//permet uniquement d'afficher des lettre // rejette tous les caract != de lettres 
-function isLetter($character)
-{
-    if (preg_match("/[a-zA-Z]/", $character) && strlen($character)==1) {
-        return TRUE;
-    } else {
-        return FALSE;
-    }
-}
+
 
 ?>

@@ -6,12 +6,11 @@ require "redis-connexion.php";
 //instanciation variables
 $chosenWord = "";
 $generalMessage = "";
-$allowWordPick = "";
-$allowSuggests = false;
+$allowWordPick = "true";
 
 //-------- On crée 4 joueurs --------
 $nbPlayers = 4;
-//Le jeu est-il lancé pour la première fois
+//Le jeu est-il lancé pour la première fois ?
 if (!isset($_SESSION['isFirstGame'])) {
 
     //Si oui, on créée les players
@@ -44,7 +43,7 @@ if (!isset($_SESSION['isFirstGame'])) {
         $_SESSION['letterPicker'] = 2;
     }
 
-    //On réinitialise les points des joueurs
+    //On réinitialise les points des joueurs à 0
     for ($i = 1; $i <= $nbPlayers; $i++) {
         $redis->set("points:" . $i, 0);
     }
@@ -55,7 +54,6 @@ if (!isset($_SESSION['isFirstGame'])) {
     $chosenWord = "";
 
     $allowWordPick = "true";
-    $allowSuggests = "false";
 }
 //Si on vient de rentrer un mot
 if (isset($_POST['submittedWord'])) {
@@ -87,7 +85,6 @@ if (isset($_POST['submittedWord'])) {
         $chosenWord = getDisplay($wordDisplay);
         $redis->set('nbAttempts', 10);
         $allowWordPick = "false";
-        $allowSuggests = "true";
     }
 }
 
@@ -125,7 +122,6 @@ if (isset($_POST['submittedLetter'])) {
                     }
                     $redis->set('nbAttempts', "Le jeu n'a pas commencé");
                     $generalMessage= "Perdu ! Vous avez utilisé vos 10 essais !";
-                    $allowSuggests = "false";
                     $allowWordPick = "true";
                 } else {
                     //on ajoute la lettre à la liste redis des lettres proposées
@@ -139,7 +135,6 @@ if (isset($_POST['submittedLetter'])) {
                             //On peut afficher le mot
                             $chosenWord = getDisplay($redis->get('WordToFind'));
                             $generalMessage=("Vous avez trouvé le mot avec ses lettres, bravo !");
-                            $allowSuggests = "false";
                             $allowWordPick = "true";
                 
                             //On change le joueur qui propose
@@ -187,7 +182,6 @@ if (isset($_POST['submittedLetter'])) {
                 $_SESSION['wordPicker'] = 1;
             }
             $redis->set('nbAttempts', "Le jeu n'a pas commencé");
-            $allowSuggests = "false";
             $allowWordPick = "true";
         }
     }
@@ -213,7 +207,6 @@ if (isset($_POST['foundWord'])) {
                 $_SESSION['wordPicker'] = 1;
             }
             $redis->set('nbAttempts', "Le jeu n'a pas commencé");
-            $allowSuggests = "false";
             $allowWordPick = "true";
         }
 
@@ -223,7 +216,6 @@ if (isset($_POST['foundWord'])) {
             //on affiche le mot en entier
             $chosenWord = getDisplay($redis->get('WordToFind'));
             $generalMessage=("Vous avez trouvé le mot !");
-            $allowSuggests = "false";
             $allowWordPick = "true";
 
             //On change de joueur qui va proposer le mot, on prend le joueur suivant
@@ -260,9 +252,7 @@ if (isset($_POST['foundWord'])) {
             $_SESSION['wordPicker'] = 1;
         }
         $redis->set('nbAttempts', "Le jeu n'a pas commencé");
-        $allowSuggests = "false";
         $allowWordPick = "true";
     }
 }
-
 ?>
