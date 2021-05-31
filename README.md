@@ -9,11 +9,14 @@
 
 ## Comment jouer ?
 
-- Un joueur propose un mot
 - La liste des joueurs s'affiche
-- Les autres joueurs peuvent proposer des lettres tour à tour
-- Les joueurs peuvent proposer un mot 
-- Les joueurs ont 60 secondes pour trouver le mot
+- On peut ajouter ou supprimer un joueur
+- Un joueur propose un mot
+- Les autres joueurs peuvent proposer des lettres ou des mots tour à tour
+- Les joueurs ont 60 secondes et 10 essais pour trouver le mot
+- Si le mot a été trouvé les joueurs participants gagnent
+- Si le mot n'a pas été trouvé, le joueur ayant proposé gagne 10 points
+- Si aucun mot n'a été proposé, on peut ajouter des joueurs 
 
 ## Comment lancer l'application ? 
 
